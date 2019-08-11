@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script src="https://unpkg.com/react@16.3.0/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16.3.0/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.js"></script>
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+      const PRODUCTS = [
+        {
+          category: "Sporting Goods",
+          price: "$49.99",
+          stocked: true,
+          name: "Football"
+        },
+        {
+          category: "Sporting Goods",
+          price: "$9.99",
+          stocked: true,
+          name: "Baseball"
+        },
+        {
+          category: "Sporting Goods",
+          price: "$29.99",
+          stocked: false,
+          name: "Basketball"
+        },
+        {
+          category: "Electronics",
+          price: "$99.99",
+          stocked: true,
+          name: "iPod Touch"
+        },
+        {
+          category: "Electronics",
+          price: "$399.99",
+          stocked: false,
+          name: "iPhone 5"
+        },
+        {
+          category: "Electronics",
+          price: "$199.99",
+          stocked: true,
+          name: "Nexus 7"
+        }
+      ];
+
+      class App extends React.Component {
+        constructor(props) {
+          super(props);
+          this.state = { searchInput: "", inStock: false };
+        }
+
+        handleInput = event => {
+          this.setState({ searchInput: event });
+        };
+
+        handleStock = event => {
+          this.setState({ inStock: event });
+        };
+
+        render() {
+          return (
+            <div>
+              <SearchBar
+                searchInput={this.state.searchInput}
+                onInputChange={this.handleInput}
+                inStock={this.state.inStock}
+                onStockChange={this.handleStock}
+              />
+              <ProductTable
+                products={PRODUCTS}
+                inStock={this.state.inStock}
+                searchInput={this.state.searchInput}
+              />
+            </div>
+          );
+        }
+      }
+
+      class SearchBar extends React.Component {
+        handleSearchChange = event => {
+          this.props.onInputChange(event.target.value);
+        };
+
+        handleStockChange = event => {
+          //   console.log(event.target.checked);
+          this.props.onStockChange(event.target.checked);
+        };
+
+        render() {
+          const searchInput = this.props.searchInput;
+          const inStock = this.props.inStock;
+          return (
+            <div>
+              <input
+                type="text"
+                placeholder="Search..."
+                onChange={this.handleSearchChange}
+              />
+              <br />
+              <label>
+                <input
+                  type="checkbox"
+                  checked={inStock}
+                  onChange={this.handleStockChange}
+                />
+                Only show products in stock
+              </label>
+            </div>
+          );
+        }
+      }
+
+      function CategoryName(props) {
+        const category = props.category;
+        return (
+          <tr>
+            <th>{props.category}</th>
+          </tr>
+        );
+      }
+
+      function Product(props) {
+        const productName = props.product.name;
+        const productPrice = props.product.price;
+        return (
+          <tr>
+            <td style={{ color: props.product.stocked ? "black" : "red" }}>
+              {productName}
+            </td>
+            <td>{productPrice}</td>
+          </tr>
+        );
+      }
+      
+      class ProductTable extends React.Component {
+        render() {
+          const inStock = this.props.inStock;
+          const searchInput = this.props.searchInput;
+          let lastCategory = null;
+          const rows = [];
+          this.props.products.forEach(product => {
+            if (product.name.indexOf(searchInput) === -1) {
+              return;
+            }
+
+            if (product.category !== lastCategory) {
+              rows.push(
+                <CategoryName
+                  category={product.category}
+                  key={product.category}
+                />
+              );
+            }
+            if (inStock && !product.stocked) {
+              return;
+            }
+
+            rows.push(<Product product={product} key={product.name} />);
+            lastCategory = product.category;
+          });
+          return (
+            <div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Price</th>
+                  </tr>
+                </thead>
+                <tbody>{rows}</tbody>
+              </table>
+            </div>
+          );
+        }
+      }
+
+      ReactDOM.render(<App />, document.getElementById("root"));
+    </script>
+  </body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script src="https://unpkg.com/react@16.3.0/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16.3.0/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.js"></script>
+    <div id="root"></div>
+    <script type="text/babel">
+      const Greeting = (props) => {
+        return <h1>THIS IS FROM {props.name} </h1>;
+      };
+
+      class App extends React.Component {
+        componentDidMount() {
+          console.log("mounted!");
+        }
+
+        render = () => {
+          console.log("rendered!");
+          return (
+            <React.Fragment>
+              <h1>THIS IS FROM MAIN APP</h1>
+              <Greeting name="DEMO" />
+            </React.Fragment>
+          );
+        };
+      }
+
+      ReactDOM.render(<App />, document.getElementById("root"));
+    </script>
+  </body>
+</html>
